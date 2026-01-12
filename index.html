@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>我的3D产品展示</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      /* 给页面加深色背景，凸显玻璃效果 */
+      background: #1a1a1a;
+    }
+    #3d-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    /* 模型切换按钮 - 核心：iPhone玻璃效果+之前的定制需求 */
+    .feature-container {
+      position: absolute;
+      bottom: 8%;
+      left: 0%;
+      width: 100%;
+      padding: 0 10%;
+      z-index: 10;
+    }
+    .feature-list {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .feature-btn {
+      flex: 1;
+      /* 缩小尺寸 */
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      /* 核心：iPhone玻璃拟态效果 */
+      border: none;
+      border-radius: 12px; /* iOS风格圆角 */
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      font-size: 0; /* 隐藏文字 */
+      /* 玻璃核心：多层模糊+色彩校正 */
+      backdrop-filter: blur(20px) saturate(180%) contrast(105%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%) contrast(105%);
+      /* 背景色：基础通透+对应按钮主色的淡染 */
+      background: rgba(255, 255, 255, 0.12);
+      /* 光影层次：内阴影+外阴影模拟玻璃的厚度和反光 */
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.25), /* 内高光 */
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1), /* 内阴影 */
+        0 4px 12px rgba(0, 0, 0, 0.08); /* 柔和外阴影 */
+      /* 过渡动画：交互更丝滑 */
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    /* 分别定义按钮主色（通过伪元素叠加颜色，不破坏玻璃通透感） */
+    .feature-btn[data-feature="model1"]::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 20, 10, 0.5); /* 红色淡染 */
+      border-radius: inherit;
+      mix-blend-mode: overlay;
+    }
+    .feature-btn[data-feature="model2"]::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(50, 100, 10, 0.5); /* 绿色淡染 */
+      border-radius: inherit;
+      mix-blend-mode: overlay;
+    }
+    .feature-btn[data-feature="model3"]::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(25, 25, 25, 0.5); /* 黑色淡染 */
+      border-radius: inherit;
+      mix-blend-mode: overlay;
+    }
+    /* 激活态：强化玻璃效果（iOS选中态） */
+    .feature-btn.active {
+      backdrop-filter: blur(20px) saturate(200%) contrast(110%);
+      -webkit-backdrop-filter: blur(20px) saturate(200%) contrast(110%);
+      background: rgba(255, 255, 255, 0.18);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.15),
+        0 6px 16px rgba(0, 0, 0, 0.12);
+      transform: translateY(-1px); /* 轻微上浮，模拟按压反馈 */
+    }
+    /* 移动端适配按钮尺寸 */
+    @media (max-width: 428px) {
+      .feature-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px; /* 移动端适配圆角 */
+      }
+    }
+
+    /* 正方体指引按钮（同步优化为iPhone玻璃效果） */
+    .direction-guide {
+      position: absolute;
+      top: 5%;
+      left: 5%;
+      transform: translateY(-50%);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      perspective: 150px;
+      transform-style: preserve-3d;
+    }
+    .cube-btn {
+      width: 60px;
+      height: 60px;
+      position: relative;
+      transform-style: preserve-3d;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      backface-visibility: hidden;
+    }
+    @media (max-width: 428px) {
+      .cube-btn {
+        width: 40px;
+        height: 40px;
+      }
+      .direction-guide {
+        perspective: 100px;
+      }
+    }
+    .cube-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      /* 正方体面同步iPhone玻璃效果 */
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(20px) saturate(180%) contrast(105%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%) contrast(105%);
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 8px; /* iOS风格圆角 */
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      color: #fff; /* 文字改白色，适配深色玻璃 */
+      font-weight: 600;
+      backface-visibility: hidden;
+    }
+    .cube-front  { transform: translateZ(30px); }
+    .cube-back   { transform: rotateY(180deg) translateZ(30px); }
+    .cube-top    { transform: rotateX(90deg) translateZ(30px); }
+    .cube-bottom { transform: rotateX(-90deg) translateZ(30px); }
+    .cube-left   { transform: rotateY(-90deg) translateZ(30px); }
+    .cube-right  { transform: rotateY(90deg) translateZ(30px); }
+    @media (max-width: 428px) {
+      .cube-front  { transform: translateZ(20px); }
+      .cube-back   { transform: rotateY(180deg) translateZ(20px); }
+      .cube-top    { transform: rotateX(90deg) translateZ(20px); }
+      .cube-bottom { transform: rotateX(-90deg) translateZ(20px); }
+      .cube-left   { transform: rotateY(-90deg) translateZ(20px); }
+      .cube-right  { transform: rotateY(90deg) translateZ(20px); }
+    }
+    .direction-text {
+      color: #fff;
+      /* 文字背景也同步玻璃效果 */
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      background: rgba(0, 0, 0, 0.2);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div id="3d-container">
+    <!-- 模型切换按钮 - 移除文字 -->
+    <div class="feature-container">
+      <div class="feature-list">
+        <button class="feature-btn active" data-feature="model1"></button>
+        <button class="feature-btn" data-feature="model2"></button>
+        <button class="feature-btn" data-feature="model3"></button>
+      </div>
+    </div>
+
+    <!-- 正方体指引按钮 -->
+    <div class="direction-guide">
+      <div class="direction-text">点击初始化</div>
+      <div class="cube-btn" id="cubeGuideBtn">
+        <div class="cube-face cube-front">后</div>
+        <div class="cube-face cube-back">前</div>
+        <div class="cube-face cube-top">上</div>
+        <div class="cube-face cube-bottom">下</div>
+        <div class="cube-face cube-left">左</div>
+        <div class="cube-face cube-right">右</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 依赖脚本 -->
+  <script src="js/three.js"></script>
+  <script src="js/GLTFLoader.js"></script>
+  <script src="js/OrbitControls.js"></script>
+  <script src="js/gsap.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
