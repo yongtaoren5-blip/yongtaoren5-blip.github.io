@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>我的3D产品展示</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #1a1a1a;
+    }
+	 
+    #3d-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    /* 模型切换按钮 - 保留原有样式 */
+    .feature-container {
+      position: absolute;
+      bottom: 8%;
+      left: 0%;
+      width: 100%;
+      padding: 0 10%;
+      z-index: 10;
+    }
+    .feature-list {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .feature-btn {
+      flex: 1;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      font-size: 0;
+      backdrop-filter: blur(20px) saturate(180%) contrast(105%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%) contrast(105%);
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1),
+        0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-btn[data-feature="model1"]::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 20, 10, 0.8);
+      border-radius: 3px;
+      mix-blend-mode: overlay;
+    }
+    .feature-btn[data-feature="model2"]::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%;
+      height: 4px;
+      background: rgba(50, 100, 10, 0.8);
+      border-radius: 3px;
+      mix-blend-mode: overlay;
+    }
+    .feature-btn[data-feature="model3"]::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%;
+      height: 4px;
+      background: rgba(25, 25, 25, 0.8);
+      border-radius: 3px;
+      mix-blend-mode: overlay;
+    }
+    .feature-btn.active {
+      backdrop-filter: blur(20px) saturate(200%) contrast(110%);
+      -webkit-backdrop-filter: blur(20px) saturate(200%) contrast(110%);
+      background: rgba(255, 255, 255, 0.18);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.15),
+        0 6px 16px rgba(0, 0, 0, 0.12);
+      transform: translateY(-1px);
+    }
+    @media (max-width: 428px) {
+      .feature-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+      }
+    }
+
+    /* 正方体指引按钮 - 保留原有样式 */
+    .direction-guide {
+      position: absolute;
+      top: 5%;
+      left: 5%;
+      transform: translateY(-50%);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      perspective: 150px;
+      transform-style: preserve-3d;
+    }
+    .cube-btn {
+      width: 60px;
+      height: 60px;
+      position: relative;
+      transform-style: preserve-3d;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      backface-visibility: hidden;
+    }
+    @media (max-width: 428px) {
+      .cube-btn {
+        width: 40px;
+        height: 40px;
+      }
+      .direction-guide {
+        perspective: 100px;
+      }
+    }
+    .cube-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(20px) saturate(180%) contrast(105%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%) contrast(105%);
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 12px;
+      color: #fff;
+      font-weight: 600;
+      backface-visibility: hidden;
+    }
+    .cube-front  { transform: translateZ(30px); }
+    .cube-back   { transform: rotateY(180deg) translateZ(30px); }
+    .cube-top    { transform: rotateX(90deg) translateZ(30px); }
+    .cube-bottom { transform: rotateX(-90deg) translateZ(30px); }
+    .cube-left   { transform: rotateY(-90deg) translateZ(30px); }
+    .cube-right  { transform: rotateY(90deg) translateZ(30px); }
+    @media (max-width: 428px) {
+      .cube-front  { transform: translateZ(20px); }
+      .cube-back   { transform: rotateY(180deg) translateZ(20px); }
+      .cube-top    { transform: rotateX(90deg) translateZ(20px); }
+      .cube-bottom { transform: rotateX(-90deg) translateZ(20px); }
+      .cube-left   { transform: rotateY(-90deg) translateZ(20px); }
+      .cube-right  { transform: rotateY(90deg) translateZ(20px); }
+    }
+    .direction-text {
+      color: #fff;
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      background: rgba(0, 0, 0, 0.01);/*3d按钮文字颜色*/
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* LOGO样式 - 核心修复 */
+    .logo-container {
+      position: absolute;
+      top: -60px; /* 修复：从-60px改为20px，让logo显示在可视区域 */
+      right: 20px;
+      z-index: 10;
+    }
+    .logo-link {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end; /* 修复：文字/图片右对齐（匹配right:20px） */
+      text-decoration: none; /* 移出@media，让所有端生效 */
+    }
+    .logo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end; /* 修复：统一右对齐，避免flex和position冲突 */
+      gap: 4px;
+      position: relative;
+    }
+    .logo-desc {
+      color: #fff;
+      font-size: 14px;
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      background: rgba(0, 0, 0, 0.01);/*logo描述文字颜色*/
+      padding: 4px 5px;
+      border-radius: 0px;
+      position: relative;
+      /* 修复1：calc语法错误 - 补充减号，数值改为合理值 */
+      left: 0; /* 修复2：删除混乱的calc，用flex对齐控制位置 */
+	  top: 80px;    /* 更改logo描述文字上下 */
+      transform: translateY(0); /* 修复3：取消不必要的偏移，用gap控制间距 */
+      width: auto; /* 修复4：自适应宽度，避免固定宽度限制 */
+      text-align: right; /* 确保文字右对齐 */
+    }
+    .logo-img {
+      width: 300px;
+      height: auto;
+      display: block;
+      margin: 0;
+    }
+
+    /* 移动端适配 - 同步修改 */
+    @media (max-width: 428px) {
+      .logo-wrap {
+        gap: 2px;
+      }
+      .logo-desc {
+        font-size: 12px;
+        padding: 3px 8px;
+        left: 0; /* 同步移动端，取消calc */
+        transform: translateY(0);
+        width: auto;
+      }
+      .logo-img {
+        width: 200px; /* 移动端缩窄logo */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="3d-container">
+    <!-- 模型切换按钮 -->
+    <div class="feature-container">
+      <div class="feature-list">
+        <button class="feature-btn active" data-feature="model1"></button>
+        <button class="feature-btn" data-feature="model2"></button>
+        <button class="feature-btn" data-feature="model3"></button>
+      </div>
+    </div>
+
+    <!-- 正方体指引按钮 -->
+    <div class="direction-guide">
+      <div class="direction-text">Initialization</div>
+      <div class="cube-btn" id="cubeGuideBtn">
+        <div class="cube-face cube-front">后</div>
+        <div class="cube-face cube-back">前</div>
+        <div class="cube-face cube-top">上</div>
+        <div class="cube-face cube-bottom">下</div>
+        <div class="cube-face cube-left">左</div>
+        <div class="cube-face cube-right">右</div>
+      </div>
+    </div>
+
+    <!-- LOGO区域 - 修复DOM结构 -->
+    <div class="logo-container">
+      <a href="https://fstopgear.com/product/ajna-37l-duradiamond/" target="_blank" class="logo-link">
+        <div class="logo-wrap">
+          <span class="logo-desc">shop</span> <!-- 调整顺序：文字在上，图片在下 -->
+          <img src="static/fstop_logo-003-2.png" alt="品牌logo" class="logo-img">
+        </div> <!-- 修复：闭合logo-wrap -->
+      </a>
+    </div>
+  </div>
+
+  <!-- 依赖脚本 -->
+  <script src="js/three.js"></script>
+  <script src="js/GLTFLoader.js"></script>
+  <script src="js/OrbitControls.js"></script>
+  <script src="js/gsap.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
