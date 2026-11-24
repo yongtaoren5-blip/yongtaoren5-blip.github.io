@@ -393,7 +393,7 @@
         </div>
       </a>
     </div>
-	<!-- Home返回按钮 -->
+	<-- Home返回按钮 -->
     <div class="home-btn-container">
       <button class="home-btn" id="homeBtn">Home</button>
     </div>
@@ -403,7 +403,13 @@
   <script src="js/GLTFLoader.js"></script>
   <script src="js/OrbitControls.js"></script>
   <script src="js/gsap.min.js"></script>
- 
+  <!-- Home按钮跳转逻辑 -->
+  <script>
+    const homeBtn = document.getElementById('homeBtn');
+    homeBtn.addEventListener('click', () => {
+      window.location.href = 'index.html';
+    });
+  </script>
   <!-- 页面配置（对齐home.js的配置风格） -->
   <script>
     window.PAGE_CONFIG = {
@@ -455,10 +461,6 @@
 	  }
 	});
 	</script>
-<<<<<<< HEAD
   <script src="js/app.js"></script>
-=======
-  <script src="js/home.js"></script>
->>>>>>> a8ad8caf6967d7704f8a2680deea511aef603bac
 </body>
 </html>
