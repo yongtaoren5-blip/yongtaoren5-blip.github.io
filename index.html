@@ -18,7 +18,7 @@
       height: 100%;
       position: relative;
     }
-    /* 模型切换按钮 - 保留原有样式 */
+    /* 模型切换按钮 */
     .feature-container {
       position: absolute;
       bottom: 8%;
@@ -108,8 +108,7 @@
         border-radius: 10px;
       }
     }
-
-    /* 正方体指引按钮 - 保留原有样式 */
+    /* 正方体指引按钮 */
     .direction-guide {
       position: absolute;
       top: 5%;
@@ -126,9 +125,12 @@
     .cube-btn {
       width: 60px;
       height: 60px;
+	  cursor: pointer;
+	    z-index: 999;
+	    pointer-events: auto !important;
+	    touch-action: none;
       position: relative;
       transform-style: preserve-3d;
-      cursor: pointer;
       transition: transform 0.3s ease;
       backface-visibility: hidden;
     }
@@ -142,6 +144,7 @@
       }
     }
     .cube-face {
+	  pointer-events: none;
       position: absolute;
       width: 100%;
       height: 100%;
@@ -179,30 +182,29 @@
       color: #fff;
       backdrop-filter: blur(20px) saturate(180%);
       -webkit-backdrop-filter: blur(20px) saturate(180%);
-      background: rgba(0, 0, 0, 0.01);/*3d按钮文字颜色*/
+      background: rgba(0, 0, 0, 0.01);
       padding: 4px 8px;
       border-radius: 6px;
       font-size: 12px;
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
-
-    /* LOGO样式 - 核心修复 */
+    /* LOGO样式 */
     .logo-container {
       position: absolute;
-      top: -60px; /* 修复：从-60px改为20px，让logo显示在可视区域 */
+      top: -60px;
       right: 20px;
       z-index: 10;
     }
     .logo-link {
       display: flex;
       flex-direction: column;
-      align-items: flex-end; /* 修复：文字/图片右对齐（匹配right:20px） */
-      text-decoration: none; /* 移出@media，让所有端生效 */
+      align-items: flex-end;
+      text-decoration: none;
     }
     .logo-wrap {
       display: flex;
       flex-direction: column;
-      align-items: flex-end; /* 修复：统一右对齐，避免flex和position冲突 */
+      align-items: flex-end;
       gap: 4px;
       position: relative;
     }
@@ -211,16 +213,15 @@
       font-size: 14px;
       backdrop-filter: blur(20px) saturate(180%);
       -webkit-backdrop-filter: blur(20px) saturate(180%);
-      background: rgba(0, 0, 0, 0.01);/*logo描述文字颜色*/
+      background: rgba(0, 0, 0, 0.01);
       padding: 4px 5px;
       border-radius: 0px;
       position: relative;
-      /* 修复1：calc语法错误 - 补充减号，数值改为合理值 */
-      left: 0; /* 修复2：删除混乱的calc，用flex对齐控制位置 */
-	  top: 80px;    /* 更改logo描述文字上下 */
-      transform: translateY(0); /* 修复3：取消不必要的偏移，用gap控制间距 */
-      width: auto; /* 修复4：自适应宽度，避免固定宽度限制 */
-      text-align: right; /* 确保文字右对齐 */
+      left: 0;
+	  top: 80px;
+      transform: translateY(0);
+      width: auto;
+      text-align: right;
     }
     .logo-img {
       width: 300px;
@@ -228,8 +229,103 @@
       display: block;
       margin: 0;
     }
-
-    /* 移动端适配 - 同步修改 */
+	/* Home返回按钮样式 */
+    .home-btn-container {
+      position: absolute;
+      bottom: 3%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+    .home-btn {
+      width: 300px;
+      height: 20px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      touch-action: manipulation;
+      backdrop-filter: blur(20px) saturate(180%) contrast(105%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%) contrast(105%);
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1),
+        0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .home-btn:hover {
+      backdrop-filter: blur(20px) saturate(200%) contrast(110%);
+      -webkit-backdrop-filter: blur(20px) saturate(200%) contrast(110%);
+      background: rgba(255, 255, 255, 0.18);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.15),
+        0 6px 16px rgba(0, 0, 0, 0.12);
+      transform: translateY(-1px);
+    }
+    /* 移动端适配 Home 按钮 */
+    @media (max-width: 428px) {
+      .home-btn {
+        width: 160px;
+        height: 20px;
+        font-size: 14px;
+        border-radius: 12px;
+      }
+      .home-btn-container {
+        bottom: 2%;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+   /* ========= ICU按钮样式 ========= */
+       .icu-wrap{
+         position:absolute;
+         top:14%;
+         left:5%;
+         z-index:11;
+       }
+       .icu-main-btn{
+         padding:8px 14px;
+         border:none;
+         border-radius:10px;
+         background:rgba(255,255,255,0.14);
+         backdrop-filter: blur(16px);
+         color:#fff;
+         font-size:14px;
+         cursor:pointer;
+       }
+       .icu-submenu{
+         display:none;  /* 默认隐藏！！之前bug在这里 */
+         margin-top:8px;
+         flex-direction:column;
+         gap:6px;
+       }
+       /* js添加show类的时候才显示 */
+       .icu-submenu.show{
+         display:flex;
+       }
+       .icu-sub-btn{
+         width:110px;
+         height:32px;
+         border:none;
+         border-radius:8px;
+         background:rgba(255,255,255,0.12);
+         backdrop-filter: blur(14px);
+         color:#fff;
+         cursor:pointer;
+         font-size:12px;
+       }
+       .icu-sub-btn:hover{
+         background:rgba(255,255,255,0.22);
+       }
+    
+    /* 移动端适配 */
     @media (max-width: 428px) {
       .logo-wrap {
         gap: 2px;
@@ -237,12 +333,19 @@
       .logo-desc {
         font-size: 12px;
         padding: 3px 8px;
-        left: 0; /* 同步移动端，取消calc */
+        left: 0;
         transform: translateY(0);
         width: auto;
       }
       .logo-img {
-        width: 200px; /* 移动端缩窄logo */
+        width: 200px;
+      }
+      .icu-wrap{
+        top:16%;
+      }
+      .icu-sub-btn{
+        width:90px;
+        height:28px;
       }
     }
   </style>
@@ -257,36 +360,107 @@
         <button class="feature-btn" data-feature="model3"></button>
       </div>
     </div>
-
     <!-- 正方体指引按钮 -->
     <div class="direction-guide">
       <div class="direction-text">Initialization</div>
       <div class="cube-btn" id="cubeGuideBtn">
-        <div class="cube-face cube-front">后</div>
-        <div class="cube-face cube-back">前</div>
+        <div class="cube-face cube-front">前</div>
+        <div class="cube-face cube-back">后</div>
         <div class="cube-face cube-top">上</div>
         <div class="cube-face cube-bottom">下</div>
         <div class="cube-face cube-left">左</div>
         <div class="cube-face cube-right">右</div>
       </div>
     </div>
-
-    <!-- LOGO区域 - 修复DOM结构 -->
+    <!-- ICU悬浮按钮 -->
+    <div class="icu-wrap">
+      <button class="icu-main-btn">ICU</button>
+      <div class="icu-submenu" data-icu-base-x="0" data-icu-base-y="-1.5" data-icu-base-z="0.6">
+        <button class="icu-sub-btn" data-icu="icu1" data-stack-allow="icu1,icu2,icu3,icu4">shallow small</button>
+        <button class="icu-sub-btn" data-icu="icu2" data-stack-allow="icu1,icu2,icu3,icu4">pro small</button>
+        <button class="icu-sub-btn" data-icu="icu3" data-stack-allow="icu1,icu2,">shallow medium</button>
+        <button class="icu-sub-btn" data-icu="icu4" data-stack-allow="icu1,icu2">slope medium</button>
+        <button class="icu-sub-btn" data-icu="icu5" data-stack-allow="">pro large</button>
+		<button class="icu-sub-btn" data-icu="icu6" data-stack-allow="">pro xl</button>
+      </div>
+    </div>
+    <!-- LOGO区域 -->
     <div class="logo-container">
       <a href="https://fstopgear.com/product/ajna-37l-duradiamond/" target="_blank" class="logo-link">
         <div class="logo-wrap">
-          <span class="logo-desc">shop</span> <!-- 调整顺序：文字在上，图片在下 -->
+          <span class="logo-desc">shop</span>
           <img src="static/fstop_logo-003-2.png" alt="品牌logo" class="logo-img">
-        </div> <!-- 修复：闭合logo-wrap -->
+        </div>
       </a>
     </div>
+	<!-- Home返回按钮 -->
+    <!div class="home-btn-container">
+      <!button class="home-btn" id="homeBtn">Home</button>
+    </div>
   </div>
-
-  <!-- 依赖脚本 -->
+  <!-- 依赖脚本（移除无用的DRACOLoader） -->
   <script src="js/three.js"></script>
   <script src="js/GLTFLoader.js"></script>
   <script src="js/OrbitControls.js"></script>
   <script src="js/gsap.min.js"></script>
-  <script src="app.js"></script>
+  <!-- Home按钮跳转逻辑 -->
+  <script>
+    const homeBtn = document.getElementById('homeBtn');
+    homeBtn.addEventListener('click', () => {
+      window.location.href = 'index.html';
+    });
+  </script>
+  <!-- 页面配置（对齐home.js的配置风格） -->
+  <script>
+    window.PAGE_CONFIG = {
+      // 初始加载模型
+      modelPath: 'static/m136red.glb',
+      // 模型基础配置
+      ambientIntensity: 2,
+      dirIntensity: 1.2,
+      modelScale: 6, // 简化为单值（和home.js一致）
+      modelYPos: 0,
+      cameraPos: [0, 0, 6],
+      autoRotateSpeed: 0.001,
+      // 模型切换配置
+      featureModels: {
+        model1: 'static/m136red.glb',
+        model2: 'static/m136green.glb',
+        model3: 'static/m136black.glb'
+      },
+      // ========= ICU模型配置，每个页面可以在这里修改大小、位置、路径 =========
+      icu:{
+        scale:6,
+        offsetX:0.1,
+        offsetY:0.5,
+        offsetZ:0.25,
+        featureModels:{
+          icu1:"static/shallow small-1.glb",
+          icu2:"static/pro small-1.glb",
+          icu3:"static/shallow m-1.glb",
+          icu4:"static/slope m-1.glb",
+          icu5:"static/pro l-1.glb",
+		  icu6:"static/pro xl-1.glb"
+        }
+      }
+    };
+	</script>
+	<script>
+	// ICU菜单展开/收起逻辑
+	const icuMainBtn = document.querySelector('.icu-main-btn');
+	const icuSubMenu = document.querySelector('.icu-submenu');
+
+	// 仅点击ICU大按钮：展开 / 再次点击收回；不监听悬浮、不监听页面空白
+	icuMainBtn.addEventListener('click', function(e){
+	  e.stopPropagation();
+	  const willShow = !icuSubMenu.classList.contains('show');
+	  icuSubMenu.classList.toggle('show');
+	  // 收起时：清除已加载的ICU模型，并把主模型透明度恢复到100%
+	  if(!willShow && typeof window.clearIcuModel === 'function'){
+	    window.clearIcuModel();
+	  }
+	});
+	</script>
+  <script src="js/app.js"></script>
 </body>
 </html>
